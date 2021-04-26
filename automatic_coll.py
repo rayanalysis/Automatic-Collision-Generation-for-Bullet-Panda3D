@@ -29,28 +29,30 @@ CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '''
-        def make_collision_from_model(input_model, world):
+        def make_collision_from_model(input_model, node_number, mass, world, target_pos):
             # tristrip generation from static models
             # generic tri-strip collision generator begins
-            geom_nodes = input_model.findAllMatches('**/+GeomNode')
-            geom_nodes = geom_nodes.getPath(0).node()
+            geom_nodes = input_model.find_all_matches('**/+GeomNode')
+            geom_nodes = geom_nodes.get_path(node_number).node()
             # print(geom_nodes)
-            geom_target = geom_nodes.getGeom(0)
+            geom_target = geom_nodes.get_geom(0)
             # print(geom_target)
             output_bullet_mesh = BulletTriangleMesh()
-            output_bullet_mesh.addGeom(geom_target)
+            output_bullet_mesh.add_geom(geom_target)
             tri_shape = BulletTriangleMeshShape(output_bullet_mesh, dynamic=False)
             print(output_bullet_mesh)
 
             body = BulletRigidBodyNode('input_model_tri_mesh')
-            np = self.render.attachNewNode(body)
-            np.node().addShape(tri_shape)
-            np.node().setMass(0)
-            np.node().setFriction(0.5)
-            np.setPos(-500, -500, 800)
-            np.setR(90)
-            np.setScale(1)
-            np.setCollideMask(BitMask32.allOn())
-            world.attachRigidBody(np.node())
+            np = self.render.attach_new_node(body)
+            np.node().add_shape(tri_shape)
+            np.node().set_mass(mass)
+            np.node().set_friction(0.01)
+            np.set_pos(target_pos)
+            np.set_scale(1)
+            # np.set_h(180)
+            # np.set_p(180)
+            # np.set_r(180)
+            np.set_collide_mask(BitMask32.allOn())
+            world.attach_rigid_body(np.node())
         
-        make_collision_from_model(access_deck_1, world)  # world = BulletWorld()
+        make_collision_from_model(arena_1, 0, 0, self.world, (arena_1.get_pos()))
